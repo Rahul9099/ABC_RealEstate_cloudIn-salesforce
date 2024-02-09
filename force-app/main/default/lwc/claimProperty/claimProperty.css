@@ -1,0 +1,8 @@
+.claim{
+    border-top: 2px solid red;
+    border-radius: 5px;
+    align-items: center;
+}
+.claim .main-buttons{
+    align-items: center;
+}
