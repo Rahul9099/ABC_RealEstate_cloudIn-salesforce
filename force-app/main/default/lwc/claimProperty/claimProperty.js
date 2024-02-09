@@ -1,6 +1,12 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import getClaimedProperties from '@salesforce/apex/ClaimProperty.getClaimedProperties';
+import updateProperty from '@salesforce/apex/ClaimProperty.updateProperty';
+import Id from '@salesforce/user/Id';
+import { getRecord } from 'lightning/uiRecordApi';
+import SALES_OFFICE_NAME_FIELD from '@salesforce/schema/Sales_Office__c.Name';
+
+
 
 const columns = [
     { label: 'Property', fieldName: 'Name' },
@@ -11,14 +17,12 @@ const columns = [
 ];
 
 export default class ClaimProperty extends LightningElement {
+    uid =Id;
+    @track CurrentUser_Agent_Name;
+    @track selectRowDataArray=[];
+    selectedNumber;
     pageName;
-    @wire(CurrentPageReference) 
-    getCurrentPageReference(pageRef) {
-        if (pageRef) {
-            this.pageName = pageRef.attributes.name;
-        }
-    }
-    data = [];
+    @track data = [];
     error;
     columns = columns;
     totalRecords=0;
@@ -26,13 +30,34 @@ export default class ClaimProperty extends LightningElement {
     pageSize;
     totalPages;
     pageNumber =1;
-    recordsToDisplay = [];
+    @track recordsToDisplay = [];
 
     get bDisableFirst() {
         return this.pageNumber == 1;
     }
     get bDisableLast() {
         return this.pageNumber == this.totalPages;
+    }
+
+
+    // @wire(CurrentPageReference) 
+    // getCurrentPageReference(pageRef) {
+    //     if (pageRef) {
+    //         this.pageName = pageRef.attributes.name;
+    //     }
+    // }
+    // @wire(getRecord, {recordId: Id,fields: [NAME_FIELD]}) 
+    // wireuser({error, data}) {
+    //     if (data) {
+    //         this.CurrentUser_Agent_Name = data.fields.Name.value;
+    //     } 
+    // }
+
+    @api recordId;
+    @wire(getRecord,{recordId:'$recordId',fields:SALES_OFFICE_NAME_FIELD})
+    sales_Region_Name_data;
+    get Name(){
+        return sales_Region_Name_data.data.fields.Name.value;
     }
 
     connectedCallback(){
@@ -85,7 +110,24 @@ export default class ClaimProperty extends LightningElement {
         }
         
     }
-   renderedCallback(){
-    console.log('record to display +++++++--> ' + JSON.stringify(this.recordsToDisplay));
-   }
+    getSelectedRow(event){
+        const selectRow = event.detail.selectedRows;
+        this.selectedNumber = selectRow.length;
+        selectRow.forEach(element => {
+            if(!this.selectRowDataArray.includes(element.id)){
+             this.selectRowDataArray.push(element.Id);
+            }
+        });
+    }
+   
+    handleClaim(){
+        updateProperty({propId:this.selectRowDataArray,agentId:this.uid})
+        .then(data=>{
+
+        })
+        .catch(error=>{
+        })
+        
+    }
+    
 }
