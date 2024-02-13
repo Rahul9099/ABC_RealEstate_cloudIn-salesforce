@@ -2,6 +2,7 @@ import { LightningElement, api, wire } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import SALES_REGION_NAME_FIELD from '@salesforce/schema/Sales_Region__c.Name';
 
+
 export default class ApproveProperty extends LightningElement {
 
     @api recordId;

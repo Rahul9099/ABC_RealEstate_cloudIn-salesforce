@@ -123,7 +123,6 @@ export default class ClaimProperty extends LightningElement {
     handleClaim(){
         updateProperty({propId:this.selectRowDataArray,agentId:this.uid})
         .then(data=>{
-
         })
         .catch(error=>{
         })
