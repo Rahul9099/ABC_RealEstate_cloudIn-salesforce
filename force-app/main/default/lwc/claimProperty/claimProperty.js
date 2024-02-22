@@ -5,6 +5,7 @@ import updateProperty from '@salesforce/apex/ClaimProperty.updateProperty';
 import Id from '@salesforce/user/Id';
 import { getRecord } from 'lightning/uiRecordApi';
 import SALES_OFFICE_NAME_FIELD from '@salesforce/schema/Sales_Office__c.Name';
+// import NAME_FIELD from '@salesforce/schema/Sales_Office__c.User.Name';
 
 
 
@@ -17,21 +18,22 @@ const columns = [
 ];
 
 export default class ClaimProperty extends LightningElement {
-    uid =Id;
+    uid = Id;
+    @api recordId;
     @track CurrentUser_Agent_Name;
-    @track selectRowDataArray=[];
+    @track selectRowDataArray = [];
     selectedNumber;
     pageName;
     @track data = [];
     error;
     columns = columns;
-    totalRecords=0;
-    pageSizeOption=5;
+    totalRecords = 0;
+    pageSizeOption = 5;
     pageSize;
     totalPages;
-    pageNumber =1;
+    pageNumber = 1;
     @track recordsToDisplay = [];
-
+    currentPropertyName;
     get bDisableFirst() {
         return this.pageNumber == 1;
     }
@@ -46,18 +48,20 @@ export default class ClaimProperty extends LightningElement {
     //         this.pageName = pageRef.attributes.name;
     //     }
     // }
-    // @wire(getRecord, {recordId: Id,fields: [NAME_FIELD]}) 
+    // @wire(getRecord, {recordId: '$recordId',fields: [NAME_FIELD]}) 
     // wireuser({error, data}) {
     //     if (data) {
     //         this.CurrentUser_Agent_Name = data.fields.Name.value;
     //     } 
     // }
 
-    @api recordId;
-    @wire(getRecord,{recordId:'$recordId',fields:SALES_OFFICE_NAME_FIELD})
-    sales_Region_Name_data;
-    get Name(){
-        return sales_Region_Name_data.data.fields.Name.value;
+    @wire(getRecord, { recordId: '$recordId', fields: [SALES_OFFICE_NAME_FIELD] })
+    getRecordName({ data, error }) {
+
+        if (data) {
+            console.log('this is user data name' + data.fields.Name.value);
+            this.currentPropertyName = data.fields.Name.value;
+        }
     }
 
     connectedCallback(){
@@ -74,6 +78,7 @@ export default class ClaimProperty extends LightningElement {
         })  
     }
 
+   
     previousPage() {
         this.pageNumber = this.pageNumber - 1;
         this.paginationHelper();
@@ -108,25 +113,25 @@ export default class ClaimProperty extends LightningElement {
             }
             this.recordsToDisplay.push(this.data[i]);
         }
-        
+
     }
-    getSelectedRow(event){
+    getSelectedRow(event) {
         const selectRow = event.detail.selectedRows;
         this.selectedNumber = selectRow.length;
         selectRow.forEach(element => {
-            if(!this.selectRowDataArray.includes(element.id)){
-             this.selectRowDataArray.push(element.Id);
+            if (!this.selectRowDataArray.includes(element.id)) {
+                this.selectRowDataArray.push(element.Id);
             }
         });
     }
-   
-    handleClaim(){
-        updateProperty({propId:this.selectRowDataArray,agentId:this.uid})
-        .then(data=>{
-        })
-        .catch(error=>{
-        })
-        
+
+    handleClaim() {
+        updateProperty({ propId: this.selectRowDataArray, agentId: this.uid })
+            .then(data => {
+            })
+            .catch(error => {
+            })
+
     }
-    
+
 }

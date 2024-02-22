@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 800px; height:600px">
+    <div style="width: auto; height:auto;">
         <article class="slds-card">
             <div class="slds-card__header slds-grid">
                 <header class="slds-media slds-media_center slds-has-flexi-truncate">
@@ -8,13 +8,13 @@
                             <svg class="slds-icon slds-icon_small" aria-hidden="true">
                                 <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
                             </svg>
-                            <span class="slds-assistive-text">{Name}</span>
+                            <span class="slds-assistive-text">{currentPropertyName}</span>
                         </span>
                     </div>
                     <div class="slds-media__body">
                         <h2 class="slds-card__header-title">
                             <a href="#" class="slds-card__header-link slds-truncate" title="Accounts">
-                                <span>{Name}</span>
+                                <span>{currentPropertyName}</span>
                             </a>
                         </h2>
                     </div>
